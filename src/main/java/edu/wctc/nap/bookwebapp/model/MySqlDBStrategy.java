@@ -13,7 +13,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -67,32 +69,90 @@ public class MySqlDBStrategy implements DBStrategy{
         return records;
     }
      @Override
-    public int deleteRecordbyPrimaryKey(String tableName, String primarykeyName, Object primaryKeyValue) throws SQLException {
+    public int deleteRecordbyPrimaryKey(String tableName, String pkColName, Object value) throws SQLException {
         int numDeleted = 0;
         PreparedStatement statement = null;
 
         
-            final String sql = "Delete FROM " + tableName + " WHERE " + primarykeyName + " = ?";
+            final String sql = "Delete FROM " + tableName + " WHERE " + pkColName + " = ?";
 
             statement = conn.prepareStatement(sql);
 
-            if (primarykeyName != null) {
-                if (primaryKeyValue instanceof String) {
-                    statement.setString(1, (String) primaryKeyValue);
+            if (pkColName != null) {
+                if (value instanceof String) {
+                    statement.setString(1, (String) value);
                 } else {
-                    statement.setObject(1, primaryKeyValue);
+                    statement.setObject(1, value);
                 }
 
             }
             numDeleted = statement.executeUpdate();
         return numDeleted;
     }
+    public int updateRecordByID(String tableName, List<String>colNames,List<Object>colValues, String pkColName, Object value) throws SQLException{
+        PreparedStatement pstmt = null;
+        int recsUpdated = 0;
+
+        // do this in an excpetion handler so that we can depend on the
+        // finally clause to close the connection
+        try {
+                    pstmt = buildUpdateStatement(conn,tableName,colNames,pkColName);
+
+                    final Iterator i=colValues.iterator();
+                    int index = 1;
+                    Object obj = null;
+
+                    // set params for column values
+                    while( i.hasNext()) {
+                        obj = i.next();
+                        pstmt.setObject(index++, obj);
+                    }
+                    // and finally set param for wehere value
+                    pstmt.setObject(index,value);
+                   
+                    recsUpdated = pstmt.executeUpdate();
+
+        } catch (SQLException sqle) {
+            throw sqle;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+                    try {
+                            pstmt.close();
+                            conn.close();
+                    } catch(SQLException e) {
+                            throw e;
+                    } // end try
+        } // end finally
+
+        return recsUpdated;
+    }
+    private PreparedStatement buildUpdateStatement(Connection conn_loc, String tableName,
+												   List colDescriptors, String whereField)
+	throws SQLException {
+		StringBuffer sql = new StringBuffer("UPDATE ");
+		(sql.append(tableName)).append(" SET ");
+		final Iterator i=colDescriptors.iterator();
+		while( i.hasNext() ) {
+			(sql.append( (String)i.next() )).append(" = ?, ");
+		}
+		sql = new StringBuffer( (sql.toString()).substring( 0,(sql.toString()).lastIndexOf(", ") ) );
+		((sql.append(" WHERE ")).append(whereField)).append(" = ?");
+		final String finalSQL=sql.toString();
+		return conn_loc.prepareStatement(finalSQL);
+	}
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         DBStrategy db = new MySqlDBStrategy();
         db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
         List<Map<String,Object>> rawData = db.findAllRecords("author",0);
-        db.closeConnection();
         System.out.println(rawData);
+        db.closeConnection();
+         db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
+        List<String> colNames = Arrays.asList("author_name","date_added");
+        List<Object> colValues = Arrays.asList("Lucifer","2000-01-23");
+        int result = db.updateRecordByID("author", colNames, colValues, "author_id", 1);
+        db.closeConnection();
+        System.out.println(result);
         
     }
 }
