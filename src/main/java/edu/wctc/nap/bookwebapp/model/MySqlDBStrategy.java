@@ -141,6 +141,65 @@ public class MySqlDBStrategy implements DBStrategy{
 		final String finalSQL=sql.toString();
 		return conn_loc.prepareStatement(finalSQL);
 	}
+      @Override
+    public int insertRecord(String tableName, List<String> columnNames, List<Object> columnValues) throws SQLException {
+         int recordsInserted = 0;
+        PreparedStatement preSmt = null;
+        
+        /*
+        INSERT INTO table_name (column1,column2,column3,...)
+        VALUES (value1,value2,value3,...);
+        */
+        
+        //make a build insert statement?? (because of single responsibilty)
+        try{
+        preSmt = buildInsertStatement(conn, tableName, columnNames);
+        
+        final Iterator i = columnValues.iterator();
+            int index = 1; // prepared statements start at 1 (w/ the "?"(s) )
+            
+
+            // set params for column values
+            while (i.hasNext()) {
+                final Object obj = i.next();
+                preSmt.setObject(index++, obj);
+            }
+
+            recordsInserted = preSmt.executeUpdate();
+        } catch (SQLException sqle) {
+            throw sqle;
+        } catch (Exception e) {
+            throw new SQLException(e.getMessage());
+        } finally {
+            try {
+                preSmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                throw e;
+            } // end try
+        } // end finally
+        
+        
+         return recordsInserted;
+    }
+        private PreparedStatement buildInsertStatement(Connection conn,String tableName,List columnNames) throws SQLException{ //no values needed because they are provided from the list
+         //multithread safe (stringbuffer)
+        //beginning of string
+         StringBuffer sql = new StringBuffer("Insert Into " + tableName + " (");
+         final Iterator i=columnNames.iterator(); //get the column names in the list
+		while( i.hasNext() ) {
+                        sql.append(i.next() + ", ");
+                }
+                //looked at examples with sql and String buffer. Still confused on somethings but this works
+                // createing a new stringbuffer constructs a string buffer initialized to the contents of the specified string.
+                //A substring returns a new String that contains a subsequence of characters currently contained in this sequence.
+         sql = new StringBuffer((sql.toString()).substring(0,(sql.toString()).lastIndexOf(", ") ) + ") Values (" ); //get the values in the list
+         for (int m = 0; m < columnNames.size();m++){
+             sql.append("?, "); 
+         }
+         final String finalSQL = ((sql.toString()).substring(0,(sql.toString()).lastIndexOf(", ") ) + ")" );
+         return conn.prepareStatement(finalSQL);
+    }
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         DBStrategy db = new MySqlDBStrategy();
         db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");

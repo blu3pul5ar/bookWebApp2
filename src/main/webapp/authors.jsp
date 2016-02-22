@@ -14,6 +14,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
         <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     </head>
     <table>
         <thead>
@@ -42,5 +43,7 @@
             </c:forEach>
         </tbody>
     </tabel>
-      <a href="index.jsp"><button id="back">Back</button></a>
+    <div class="container" id="goBackContainer">
+        <a href="index.html"><button type="button" id="goBack" class="btn btn-primary">Go Back</button></a>
+        </div>
 </html>
