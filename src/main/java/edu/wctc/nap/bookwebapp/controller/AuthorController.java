@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.List;
+import javax.inject.Inject;
 
 /**
  *
@@ -30,6 +31,8 @@ public class AuthorController extends HttpServlet {
 
     private static final String PATH = "authors.jsp";
     private static final String DELETE_RESP_VIEW = "DeleteAuthorResponse.jsp";
+    @Inject
+    private AuthorService as;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -63,7 +66,6 @@ public class AuthorController extends HttpServlet {
 //         RequestDispatcher rd = request.getRequestDispatcher(PATH);
 //            rd.forward(request, response);
             String taskType = request.getParameter("taskType");
-            AuthorService as = new AuthorService();
 
             if (taskType.equals("viewAuthor")) {
                 request.setAttribute("authors", as.getAuthorList());

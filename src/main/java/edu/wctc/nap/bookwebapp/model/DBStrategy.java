@@ -10,6 +10,7 @@ package edu.wctc.nap.bookwebapp.model;
  * @author Nicholas
  */
 
+import exceptions.DataAccessException;
     import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,8 @@ import java.util.Map;
  * @author jlombardo
  */
 public interface DBStrategy {
-    
+    public abstract  Map<String,Object> findById(String tableName, String primaryKeyFieldName, 
+            Object primaryKeyValue) throws DataAccessException;
     public abstract void openConnection(String driverClass, String url, 
             String userName, String password) 
             throws ClassNotFoundException, SQLException;

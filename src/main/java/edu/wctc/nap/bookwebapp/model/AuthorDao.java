@@ -5,12 +5,16 @@
  */
 package edu.wctc.nap.bookwebapp.model;
 
+import exceptions.DataAccessException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 
    
@@ -18,17 +22,29 @@ import java.util.Map;
  *
  * @author Nicholas
  */
-public class AuthorDao implements AuthorDaoStrategy {
+@SessionScoped
+public class AuthorDao implements AuthorDaoStrategy, Serializable {
      private static final String TABLE_NAME = "author";
     private static final String AUTHOR_ID = "author_id";
     private static final String AUTHOR_NAME = "author_name";
     private static final String DATE_ADDED = "date_added";
-    
-    private DBStrategy db = new MySqlDBStrategy();
+    @Inject
+    private DBStrategy db;
     private final String DRIVER = "com.mysql.jdbc.Driver";
     private final String URL = "jdbc:mysql://localhost:3306/book";
     private final String USER = "root";
     private final String PWD = "admin";
+
+    public DBStrategy getDb() {
+        return db;
+    }
+
+    public void setDb(DBStrategy db) {
+        this.db = db;
+    }
+
+    public AuthorDao() {
+    }
     
     @Override
     public List<Author> getAuthorList() throws ClassNotFoundException, SQLException{
@@ -72,7 +88,18 @@ public class AuthorDao implements AuthorDaoStrategy {
 
     }
     
-    
+     @Override
+     public Author getAuthorById(Integer authorId)throws DataAccessException, ClassNotFoundException, SQLException {
+        db.openConnection(DRIVER, URL, USER, PWD);
+        
+        Map<String,Object> rawRec = db.findById("author", "author_id", authorId);
+        Author author = new Author();
+        author.setAuthorId((Integer)rawRec.get("author_id"));
+        author.setAuthorName(rawRec.get("author_name").toString());
+        author.setDateAdded((Date)rawRec.get("date_added"));
+        
+        return author;
+    }
     @Override
     public int addAuthor(Author author) throws SQLException{
         try {

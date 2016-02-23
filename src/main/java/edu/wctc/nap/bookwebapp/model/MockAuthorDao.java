@@ -5,17 +5,23 @@
  */
 package edu.wctc.nap.bookwebapp.model;
 
+import exceptions.DataAccessException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Alternative;
 
 /**
  *
  * @author Nicholas
  */
-public class MockAuthorDao implements AuthorDaoStrategy{ 
+@Alternative
+@SessionScoped
+public class MockAuthorDao implements AuthorDaoStrategy, Serializable{ 
        private Author one = new Author(001,"bob",new Date(95,5,2)); 
     private Author two = new Author(002,"chris",new Date(100,2,7)); 
     private Author three = new Author(003,"evan",new Date(112,10,27));
@@ -41,6 +47,11 @@ public class MockAuthorDao implements AuthorDaoStrategy{
     @Override
     public int addAuthor(Author author) throws SQLException {
         return 1;
+    }
+
+    @Override
+    public Author getAuthorById(Integer authorId) throws DataAccessException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

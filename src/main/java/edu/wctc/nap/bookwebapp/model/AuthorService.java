@@ -5,15 +5,33 @@
  */
 package edu.wctc.nap.bookwebapp.model;
 
+import exceptions.DataAccessException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /**
  *
  * @author Nicholas
  */
-public class AuthorService {
-    private AuthorDaoStrategy dao = new AuthorDao();
+@SessionScoped
+public class AuthorService implements Serializable{
+    @Inject
+    private AuthorDaoStrategy dao;
+
+    public AuthorDaoStrategy getDao() {
+        return dao;
+    }
+
+    public void setDao(AuthorDaoStrategy dao) {
+        this.dao = dao;
+    }
+
+    public AuthorService() {
+    }
+    
     public List<Author> getAuthorList() throws ClassNotFoundException, SQLException{
         return dao.getAuthorList();
     }
@@ -32,9 +50,13 @@ public class AuthorService {
     public Object deleteAuthorbyID(String authorId) throws ClassNotFoundException, SQLException {
         return dao.deleteAuthorByID(authorId);
     }
+    public Author getAuthorById(String authorId) throws DataAccessException, SQLException, ClassNotFoundException {
+        return dao.getAuthorById(Integer.parseInt(authorId));
+    }
         public static void main(String[] args) throws ClassNotFoundException, SQLException {
         AuthorService srv = new AuthorService();
         List<Author> authors = srv.getAuthorList();
         System.out.println(authors);
     }
+        
 }

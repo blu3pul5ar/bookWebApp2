@@ -5,6 +5,7 @@
  */
 package edu.wctc.nap.bookwebapp.model;
 
+import exceptions.DataAccessException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -20,4 +21,5 @@ public interface AuthorDaoStrategy {
     public abstract int updatebyID(Author author) throws SQLException;
 
     public abstract int addAuthor(Author author) throws SQLException;
+    public abstract Author getAuthorById(Integer authorId) throws DataAccessException,SQLException, ClassNotFoundException;
 }
