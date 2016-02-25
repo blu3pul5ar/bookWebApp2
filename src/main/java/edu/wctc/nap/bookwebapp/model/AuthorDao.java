@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 
@@ -22,7 +22,7 @@ import javax.inject.Inject;
  *
  * @author Nicholas
  */
-@SessionScoped
+@Dependent
 public class AuthorDao implements AuthorDaoStrategy, Serializable {
      private static final String TABLE_NAME = "author";
     private static final String AUTHOR_ID = "author_id";
@@ -30,11 +30,50 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     private static final String DATE_ADDED = "date_added";
     @Inject
     private DBStrategy db;
-    private final String DRIVER = "com.mysql.jdbc.Driver";
-    private final String URL = "jdbc:mysql://localhost:3306/book";
-    private final String USER = "root";
-    private final String PWD = "admin";
+    private String driver;
+    private String url;
+    private String user;
+    private String pwd;
+    @Override
+    public void initDao(String driver, String url, String user, String pwd){
+        setDriver(driver);
+        setUrl(url);
+        setUser(user);
+        setPwd(pwd);
+    }
 
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+    
     public DBStrategy getDb() {
         return db;
     }
@@ -48,7 +87,7 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     
     @Override
     public List<Author> getAuthorList() throws ClassNotFoundException, SQLException{
-        db.openConnection(DRIVER, URL, USER, PWD);
+        db.openConnection(driver, url, user, pwd);
         List<Map<String, Object>> raw = db.findAllRecords(TABLE_NAME, 0);
         List<Author> authors = new ArrayList<>();
         for(Map rec : raw){
@@ -65,7 +104,7 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
         return authors;
     }
     public int deleteAuthorByID(Object id) throws ClassNotFoundException, SQLException{
-         db.openConnection(DRIVER, URL, USER, PWD);
+         db.openConnection(driver, url, user, pwd);
          int result = db.deleteRecordbyPrimaryKey(TABLE_NAME, AUTHOR_ID, id);
          db.closeConnection();
          return result;
@@ -73,7 +112,7 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
      @Override
     public int updatebyID(Author author) throws SQLException {
         try {
-            db.openConnection(DRIVER, URL, USER, PWD);
+            db.openConnection(driver, url, user, pwd);
             List<String> authorColumns = Arrays.asList(AUTHOR_NAME, DATE_ADDED);;
             List<Object> authorValues = Arrays.asList(author.getAuthorName(), author.getDateAdded());
             int numAuthor = db.updateRecordByID(TABLE_NAME, authorColumns, authorValues, AUTHOR_ID, author.getAuthorId());
@@ -90,7 +129,7 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     
      @Override
      public Author getAuthorById(Integer authorId)throws DataAccessException, ClassNotFoundException, SQLException {
-        db.openConnection(DRIVER, URL, USER, PWD);
+        db.openConnection(driver, url, user, pwd);
         
         Map<String,Object> rawRec = db.findById("author", "author_id", authorId);
         Author author = new Author();
@@ -103,7 +142,7 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     @Override
     public int addAuthor(Author author) throws SQLException{
         try {
-            db.openConnection(DRIVER, URL, USER, PWD);
+            db.openConnection(driver, url, user, pwd);
             List<String> authorColumns = Arrays.asList(AUTHOR_NAME, DATE_ADDED);;
             List<Object> authorValues = Arrays.asList(author.getAuthorName(), author.getDateAdded());
             int numAuthor = db.insertRecord(TABLE_NAME, authorColumns, authorValues);

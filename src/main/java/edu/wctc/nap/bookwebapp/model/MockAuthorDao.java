@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Alternative;
 
 /**
@@ -20,7 +20,7 @@ import javax.enterprise.inject.Alternative;
  * @author Nicholas
  */
 @Alternative
-@SessionScoped
+@Dependent
 public class MockAuthorDao implements AuthorDaoStrategy, Serializable{ 
        private Author one = new Author(001,"bob",new Date(95,5,2)); 
     private Author two = new Author(002,"chris",new Date(100,2,7)); 
@@ -33,7 +33,9 @@ public class MockAuthorDao implements AuthorDaoStrategy, Serializable{
     authors.add(three);
     return authors;
     }
-
+public void initDao(String driver, String url, String user, String pwd){
+        
+    }
     @Override
     public int deleteAuthorByID(Object id) throws ClassNotFoundException, SQLException {
        return 1;

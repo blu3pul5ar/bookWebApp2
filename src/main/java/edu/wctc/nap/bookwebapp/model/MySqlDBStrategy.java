@@ -20,13 +20,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.Dependent;
 
 /**
  *
  * @author Nicholas
  */
-@SessionScoped
+@Dependent
 public class MySqlDBStrategy implements DBStrategy,Serializable{
     private Connection conn;
 

@@ -16,6 +16,7 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     </head>
+    <body>
     <table>
         <thead>
         <tr>
@@ -23,27 +24,33 @@
                 Author Name
             </th>
             <th>
-                Author Number
-            </th>
-            <th>
                 Author Add Date
             </th>
+            <th></th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
             <c:forEach items="${authors}" var="item">
                 <tr>
                     <td> ${item.authorName} </td>
-                    <td> ${item.authorId} </td>
                     <td>
                         <fmt:formatDate pattern="MM-dd-yyyy" 
                             value="${item.dateAdded}" />
                     </td>
+                    <td>
+                        <input name="edit" value="Edit" type="button" class="btn-primary" id="authorId" onclick="location.href='AuthorController?taskType=edit&id=${item.authorId}'"/>
+                    </td>
+                    <td>
+                        <input type="submit" name="" value="Delete" class="btn-danger" id="authorId" onclick="location.href='AuthorController?taskType=deleteAuthor&id=${item.authorId}'"/>
+                    </td>
                     </tr>
             </c:forEach>
         </tbody>
-    </tabel>
-    <div class="container" id="goBackContainer">
+    </table>
+        <div class="container" id="goBackContainer">
         <a href="index.html"><button type="button" id="goBack" class="btn btn-primary">Go Back</button></a>
         </div>
+        <script src="//code.jquery.com/jquery-1.12.0.min.js"/>
+    </body>
 </html>
