@@ -9,7 +9,6 @@ and open the template in the editor.
 */
 table, th, td{
     border: 1px solid black;
-    margin-top: 20%;
     color: white;
     text-shadow: 1px black;
     text-align: center;
@@ -21,7 +20,4 @@ table{
 #authors{
     margin-left: 45%;
     margin-top: 20%;
-}
-html{
-    background-image: url(3707991.jpg);
 }

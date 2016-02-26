@@ -13,10 +13,10 @@
     </head>
     <body>
         <form method="post" action="AuthorController?taskType=new">
-            <label>Enter the Name of the author</label>
+            <label>Enter the name of the author</label>
             <input type="text" name="authorName"/>
             <input type="submit" value="save"/>
-            <input type="submit" value="cancel"/>
+            <input type="button" value="cancel" onclick="location.href='AuthorController?taskType=cancel'"/>
         </form>
     </body>
 </html>

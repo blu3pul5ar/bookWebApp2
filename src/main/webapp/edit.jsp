@@ -13,11 +13,11 @@
     </head>
     <body>
         <form method="post" action="AuthorController?taskType=save">
-        <input type="number" readonly name=authorId value="${author.authorId}" />
+        <input type="text" readonly name=authorId value="${author.authorId}" />
             <input type="text" name="authorName" value="${author.authorName}"/>
             <input type="date" readonly name="dateadded" value="${author.dateAdded}" />
             <input type="submit" value="save"/>
-            <input type="submit" value="cancel"/>
+            <input type="button" value="cancel" onclick="location.href='AuthorController?taskType=cancel'"/>
         </form>
     </body>
 </html>

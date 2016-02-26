@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     </head>
     <body>
-        <input type="submit" name="" value="Add Author" class="btn-danger" id="authorId" onclick="location.href='AuthorController?taskType=add'"/>
+    <center><input type="submit" name="" value="Add Author" class="btn-danger" id="authorId" onclick="location.href='AuthorController?taskType=add'"/></center>
     <table>
         <thead>
         <tr>
@@ -49,9 +49,8 @@
             </c:forEach>
         </tbody>
     </table>
-        <div class="container" id="goBackContainer">
         <a href="index.html"><button type="button" id="goBack" class="btn btn-primary">Go Back</button></a>
-        </div>
+
         <script src="//code.jquery.com/jquery-1.12.0.min.js"/>
     </body>
 </html>

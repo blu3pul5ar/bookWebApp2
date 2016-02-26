@@ -39,16 +39,16 @@ public class AuthorService implements Serializable{
         return dao.deleteAuthorByID(id);
     }
 
-    public int addAuthor(String name) throws SQLException {
-        return dao.addAuthor(name);
+    public boolean addAuthor(String name) throws SQLException {
+        Integer id = null;
+        return dao.addAuthor(id,name);
     }
     public Author getAuthorById(String authorId) throws DataAccessException, SQLException, ClassNotFoundException {
         return dao.getAuthorById(Integer.parseInt(authorId));
     }
      public void updateAuthorbyId(String authorId, String authorName) throws DataAccessException, SQLException, ClassNotFoundException {
-         Author a = getAuthorById(authorId);
-         a.setAuthorName(authorName);
-         dao.updatebyID(a);
+         Integer id = Integer.parseInt(authorId);
+         dao.updatebyID(id,authorName);
     }
       
         public static void main(String[] args) throws ClassNotFoundException, SQLException {

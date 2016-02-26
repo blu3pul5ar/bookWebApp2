@@ -32,5 +32,5 @@ public interface DBStrategy {
     public abstract List<Map<String,Object>> findAllRecords(String tableName, int maxRecords) throws SQLException;
     public int deleteRecordbyPrimaryKey(String tableName, String primarykeyName, Object primaryKeyValue) throws SQLException;
     public int updateRecordByID(String tableName, List<String>colNames,List<Object>colValues, String pkColName, Object value) throws SQLException;
-   public int insertRecord(String tableName, String colName, String val) throws SQLException;
+   boolean insertRecord(String tableName, List colDescriptors, List colValues) throws DataAccessException;
 }

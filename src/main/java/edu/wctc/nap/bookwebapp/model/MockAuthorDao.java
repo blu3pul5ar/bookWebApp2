@@ -42,18 +42,20 @@ public void initDao(String driver, String url, String user, String pwd){
     }
 
     @Override
-    public int updatebyID(Author author) throws SQLException {
+    public int updatebyID(Integer authorId, String name) throws SQLException {
         return 1;
     }
 
-    @Override
-    public int addAuthor(String name) throws SQLException {
-        return 1;
-    }
+    
 
     @Override
     public Author getAuthorById(Integer authorId) throws DataAccessException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean addAuthor(Integer id, String name) throws SQLException {
+        return true;
     }
     
 }

@@ -145,52 +145,66 @@ public class MySqlDBStrategy implements DBStrategy,Serializable{
 		final String finalSQL=sql.toString();
 		return conn_loc.prepareStatement(finalSQL);
 	}
-      @Override
-    public int insertRecord(String tableName, String colName, String val) throws SQLException {
-         int recordsInserted = 0;
-        PreparedStatement preSmt = null;
-        
-        /*
-        INSERT INTO table_name (column1,column2,column3,...)
-        VALUES (value1,value2,value3,...);
-        */
-        
-        //make a build insert statement?? (because of single responsibilty)
-        try{
-        preSmt = buildInsertStatement(conn, tableName, colName);
-                preSmt.setObject(1, val);
-            recordsInserted = preSmt.executeUpdate();
+       @Override
+    public final boolean insertRecord(String tableName, List colDescriptors,
+            List colValues) throws DataAccessException {
+
+        PreparedStatement pstmt = null;
+        int recsUpdated = 0;
+
+		// do this in an excpetion handler so that we can depend on the
+        // finally clause to close the connection
+        try {
+            pstmt = buildInsertStatement(conn, tableName, colDescriptors);
+
+            final Iterator i = colValues.iterator();
+            int index = 1;
+            while (i.hasNext()) {
+                final Object obj = i.next();
+                pstmt.setObject(index++, obj);
+            }
+            recsUpdated = pstmt.executeUpdate();
+
         } catch (SQLException sqle) {
-            throw sqle;
+            throw new DataAccessException(sqle.getMessage(),sqle.getCause());
         } catch (Exception e) {
-            throw new SQLException(e.getMessage());
+            throw new DataAccessException(e.getMessage(),e.getCause());
         } finally {
             try {
-                preSmt.close();
+                pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                throw e;
+                throw new DataAccessException(e.getMessage(),e.getCause());
             } // end try
         } // end finally
-        
-        
-         return recordsInserted;
+
+        if (recsUpdated == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
-        private PreparedStatement buildInsertStatement(Connection conn,String tableName,String columnNames) throws SQLException{ //no values needed because they are provided from the list
-         //multithread safe (stringbuffer)
-        //beginning of string
-         StringBuffer sql = new StringBuffer("Insert Into " + tableName + " (");
-       
-                        sql.append(columnNames);
-                
-                //looked at examples with sql and String buffer. Still confused on somethings but this works
-                // createing a new stringbuffer constructs a string buffer initialized to the contents of the specified string.
-                //A substring returns a new String that contains a subsequence of characters currently contained in this sequence.
-         sql = new StringBuffer((sql.toString()).substring(0,(sql.toString()).lastIndexOf(", ") ) + ") Values (" ); //get the values in the list
-             sql.append("?, "); 
-         
-         final String finalSQL = ((sql.toString()).substring(0,(sql.toString()).lastIndexOf(", ") ) + ")" );
-         return conn.prepareStatement(finalSQL);
+       private PreparedStatement buildInsertStatement(Connection conn, String tableName, List colDescriptors)
+            throws DataAccessException {
+        StringBuffer sql = new StringBuffer("INSERT INTO ");
+        (sql.append(tableName)).append(" (");
+        final Iterator i = colDescriptors.iterator();
+        while (i.hasNext()) {
+            (sql.append((String) i.next())).append(", ");
+        }
+        sql = new StringBuffer((sql.toString()).substring(0, (sql.toString()).lastIndexOf(", ")) + ") VALUES (");
+        for (int j = 0; j < colDescriptors.size(); j++) {
+            sql.append("?, ");
+        }
+        final String finalSQL = (sql.toString()).substring(0, (sql.toString()).lastIndexOf(", ")) + ")";
+        //System.out.println(finalSQL);
+        PreparedStatement psmt = null;
+        try {
+            psmt = conn.prepareStatement(finalSQL);
+        } catch(SQLException e) {
+            throw new DataAccessException(e.getMessage(),e.getCause());
+        }
+        return psmt;
     }
          public final Map<String, Object> findById(String tableName, String primaryKeyFieldName,
             Object primaryKeyValue) throws DataAccessException {

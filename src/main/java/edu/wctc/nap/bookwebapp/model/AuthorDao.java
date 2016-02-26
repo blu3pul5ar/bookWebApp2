@@ -110,21 +110,12 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
          return result;
     }
      @Override
-    public int updatebyID(Author author) throws SQLException {
-        try {
+    public int updatebyID(Integer authorId, String name) throws SQLException, ClassNotFoundException {
             db.openConnection(driver, url, user, pwd);
-            List<String> authorColumns = Arrays.asList(AUTHOR_NAME, DATE_ADDED);;
-            List<Object> authorValues = Arrays.asList(author.getAuthorName(), author.getDateAdded());
-            int numAuthor = db.updateRecordByID(TABLE_NAME, authorColumns, authorValues, AUTHOR_ID, author.getAuthorId());
-            return numAuthor;
-        } catch (SQLException sqlE) {
-            throw sqlE;
-        } catch (Exception e) {
-            throw new SQLException(e.getMessage());
-        } finally {
-            db.closeConnection();
-        }
-
+            int recsUpdated = db.updateRecordByID("author", Arrays.asList("author_name"), 
+                                       Arrays.asList(name),
+                                       "author_id", authorId);
+            return recsUpdated;
     }
     
      @Override
@@ -140,11 +131,13 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
         return author;
     }
     @Override
-    public int addAuthor(String name) throws SQLException{
+    public boolean addAuthor(Integer id,String name) throws SQLException{
+        boolean result = false;
         try {
             db.openConnection(driver, url, user, pwd);
-            int numAuthor = db.insertRecord(TABLE_NAME, AUTHOR_NAME, name);
-            return numAuthor;
+            result = db.insertRecord("author", Arrays.asList("author_name","date_added"), 
+                                      Arrays.asList(name,new Date()));
+            return result;
         } catch (SQLException sqlE) {
             throw sqlE;
         } catch (Exception e) {

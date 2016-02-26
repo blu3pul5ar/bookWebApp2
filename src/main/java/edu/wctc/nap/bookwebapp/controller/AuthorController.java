@@ -93,7 +93,15 @@ public class AuthorController extends HttpServlet {
              }
             else if(taskType.equals("new")){
                 String authorName = request.getParameter("authorName");
+                if(authorName != null){
                 as.addAuthor(authorName);
+                this.refreshList(request, as);
+                dest = PATH;
+                }
+                this.refreshList(request, as);
+                dest = PATH;
+            }
+            else if (taskType.equals("cancel")){
                 this.refreshList(request, as);
                 dest = PATH;
             }
