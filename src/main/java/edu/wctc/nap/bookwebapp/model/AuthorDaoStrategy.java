@@ -19,8 +19,7 @@ public interface AuthorDaoStrategy {
     public abstract int deleteAuthorByID(Object id) throws ClassNotFoundException, SQLException;
     
     public abstract int updatebyID(Author author) throws SQLException;
-
-    public abstract int addAuthor(Author author) throws SQLException;
+    public abstract int addAuthor(String name) throws SQLException;
     public abstract Author getAuthorById(Integer authorId) throws DataAccessException,SQLException, ClassNotFoundException;
     public void initDao(String driver, String url, String user, String pwd);
 }

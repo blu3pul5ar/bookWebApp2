@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     </head>
     <body>
+        <input type="submit" name="" value="Add Author" class="btn-danger" id="authorId" onclick="location.href='AuthorController?taskType=add'"/>
     <table>
         <thead>
         <tr>

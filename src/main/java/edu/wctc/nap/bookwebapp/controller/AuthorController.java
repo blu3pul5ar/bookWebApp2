@@ -81,7 +81,7 @@ public class AuthorController extends HttpServlet {
                     request.setAttribute("author", author);
                     dest= AUTHOR_EDIT_VIEW;
            }
-             else if(taskType.equals("Add")){
+             else if(taskType.equals("add")){
                     dest = AUTHOR_ADD_VIEW;
                 }
              else if(taskType.equals("save")){ 
@@ -91,6 +91,12 @@ public class AuthorController extends HttpServlet {
                     this.refreshList(request, as);
                     dest = PATH;         
              }
+            else if(taskType.equals("new")){
+                String authorName = request.getParameter("authorName");
+                as.addAuthor(authorName);
+                this.refreshList(request, as);
+                dest = PATH;
+            }
            }catch(Exception e){
     
            }

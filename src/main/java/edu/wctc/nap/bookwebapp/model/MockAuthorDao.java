@@ -47,7 +47,7 @@ public void initDao(String driver, String url, String user, String pwd){
     }
 
     @Override
-    public int addAuthor(Author author) throws SQLException {
+    public int addAuthor(String name) throws SQLException {
         return 1;
     }
 

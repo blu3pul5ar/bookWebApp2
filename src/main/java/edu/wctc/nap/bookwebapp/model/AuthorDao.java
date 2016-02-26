@@ -140,12 +140,10 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
         return author;
     }
     @Override
-    public int addAuthor(Author author) throws SQLException{
+    public int addAuthor(String name) throws SQLException{
         try {
             db.openConnection(driver, url, user, pwd);
-            List<String> authorColumns = Arrays.asList(AUTHOR_NAME, DATE_ADDED);;
-            List<Object> authorValues = Arrays.asList(author.getAuthorName(), author.getDateAdded());
-            int numAuthor = db.insertRecord(TABLE_NAME, authorColumns, authorValues);
+            int numAuthor = db.insertRecord(TABLE_NAME, AUTHOR_NAME, name);
             return numAuthor;
         } catch (SQLException sqlE) {
             throw sqlE;
