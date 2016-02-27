@@ -13,7 +13,7 @@
     </head>
     <body>
         <form method="post" action="AuthorController?taskType=save">
-        <input type="text" readonly name=authorId value="${author.authorId}" />
+        <input type="text" readonly name="authorId" value="${author.authorId}" />
             <input type="text" name="authorName" value="${author.authorName}"/>
             <input type="date" readonly name="dateadded" value="${author.dateAdded}" />
             <input type="submit" value="save"/>

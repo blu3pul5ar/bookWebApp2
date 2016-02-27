@@ -30,7 +30,7 @@ import javax.inject.Inject;
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
 
-    private static final String PATH = "authors.jsp";
+    private static final String AUTHORS = "authors.jsp";
     private static final String AUTHOR_EDIT_VIEW = "edit.jsp";
     private static final String AUTHOR_ADD_VIEW = "add.jsp";
     private String driverClass;
@@ -64,46 +64,55 @@ public class AuthorController extends HttpServlet {
             String taskType = request.getParameter("taskType");
             configDbConnection();
         try{
-            if (taskType.equals("viewAuthor")) {
-                request.setAttribute("authors", as.getAuthorList());
-                dest = PATH;
-            }
-           else if (taskType.equals("deleteAuthor")) {
-               String authorId = (String)request.getParameter("id");
-                int i = as.deleteAuthorByID(authorId);
-                request.setAttribute("authorIdResp",i);
-                this.refreshList(request, as);
-                dest = PATH;
-           }
-           else if (taskType.equals("edit")){
-               String authorId = (String)request.getParameter("id");
-               Author author = as.getAuthorById(authorId);
-                    request.setAttribute("author", author);
-                    dest= AUTHOR_EDIT_VIEW;
-           }
-             else if(taskType.equals("add")){
+            switch (taskType) {
+                case "viewAuthor":
+                    request.setAttribute("authors", as.getAuthorList());
+                    dest = AUTHORS;
+                    break;
+                case "deleteAuthor":
+                    {
+                        String authorId = (String)request.getParameter("id");
+                        int i = as.deleteAuthorByID(authorId);
+                        request.setAttribute("authorIdResp",i);
+                        this.refreshList(request, as);
+                        dest = AUTHORS;
+                        break;
+                    }
+                case "edit":
+                    {
+                        String authorId = (String)request.getParameter("id");
+                        Author author = as.getAuthorById(authorId);
+                        request.setAttribute("author", author);
+                        dest= AUTHOR_EDIT_VIEW;
+                        break;
+                    }
+                case "add":
                     dest = AUTHOR_ADD_VIEW;
-                }
-             else if(taskType.equals("save")){ 
-                 String authorName = request.getParameter("authorName");
-                    String authorId = request.getParameter("authorId");
-                    as.updateAuthorbyId(authorId, authorName);
+                    break;
+                case "save":
+                    {
+                        String authorName = request.getParameter("authorName");
+                        String authorId = request.getParameter("authorId");
+                        as.updateAuthorbyId(authorId, authorName);
+                        this.refreshList(request, as);
+                        dest = AUTHORS;
+                        break;
+                    }
+                case "new":
+                    {
+                        String authorName = request.getParameter("authorName");
+                        if(authorName != null){
+                            as.addAuthor(authorName);
+                        }       this.refreshList(request, as);
+                        dest = AUTHORS;
+                        break;
+                    }
+                case "cancel":
                     this.refreshList(request, as);
-                    dest = PATH;         
-             }
-            else if(taskType.equals("new")){
-                String authorName = request.getParameter("authorName");
-                if(authorName != null){
-                as.addAuthor(authorName);
-                this.refreshList(request, as);
-                dest = PATH;
-                }
-                this.refreshList(request, as);
-                dest = PATH;
-            }
-            else if (taskType.equals("cancel")){
-                this.refreshList(request, as);
-                dest = PATH;
+                    dest = AUTHORS;
+                    break;
+                default:
+                    break;
             }
            }catch(Exception e){
     
@@ -174,7 +183,6 @@ public class AuthorController extends HttpServlet {
         driverClass = getServletContext().getInitParameter("db.driver.class");
         url = getServletContext().getInitParameter("db.url");
         userName = getServletContext().getInitParameter("db.username");
-        password = getServletContext().getInitParameter("db.password");
-        
+        password = getServletContext().getInitParameter("db.password");    
     }
 }
