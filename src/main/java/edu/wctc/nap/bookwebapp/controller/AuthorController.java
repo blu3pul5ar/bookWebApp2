@@ -117,7 +117,7 @@ public class AuthorController extends HttpServlet {
            }catch(Exception e){
     
            }
-                RequestDispatcher view = request.getRequestDispatcher(dest);
+                RequestDispatcher view = request.getRequestDispatcher(response.encodeURL(dest));
                 view.forward(request, response);
     }
     private void refreshList(HttpServletRequest request, AuthorService authService) throws Exception {
