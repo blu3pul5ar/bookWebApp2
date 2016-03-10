@@ -7,6 +7,7 @@ package edu.wctc.nap.bookwebapp.controller;
 
 import edu.wctc.nap.bookwebapp.model.Author;
 import edu.wctc.nap.bookwebapp.model.AuthorService;
+import exceptions.DataAccessException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -22,6 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.List;
 import javax.inject.Inject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 /**
  *
@@ -29,10 +35,11 @@ import javax.inject.Inject;
  */
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
-
+    private String dbJndiName;
     private static final String AUTHORS = "authors.jsp";
     private static final String AUTHOR_EDIT_VIEW = "edit.jsp";
     private static final String AUTHOR_ADD_VIEW = "add.jsp";
+    private static final String HOME = "index.jsp";
     private String driverClass;
     private String url;
     private String userName;
@@ -62,8 +69,8 @@ public class AuthorController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
       String dest = "";
             String taskType = request.getParameter("taskType");
-            configDbConnection();
         try{
+            configDbConnection();
             switch (taskType) {
                 case "viewAuthor":
                     request.setAttribute("authors", as.getAuthorList());
@@ -111,11 +118,21 @@ public class AuthorController extends HttpServlet {
                     this.refreshList(request, as);
                     dest = AUTHORS;
                     break;
+                case "color":
+                    String table = request.getParameter("showPaletteOnly");
+                    String text = request.getParameter("showPaletteOnly1");
+                    HttpSession session = request.getSession();
+                    session.setAttribute("table",table);
+                    session.setAttribute("text",text);
+                    this.refreshList(request, as);
+                    dest = AUTHORS;
+                    break;
                 default:
+                    dest = HOME;
                     break;
             }
            }catch(Exception e){
-    
+                request.setAttribute(HOME, e);
            }
                 RequestDispatcher view = request.getRequestDispatcher(response.encodeURL(dest));
                 view.forward(request, response);
@@ -124,8 +141,15 @@ public class AuthorController extends HttpServlet {
         List<Author> authors = as.getAuthorList();
         request.setAttribute("authors", authors);
     }
-    private void configDbConnection(){
+    private void configDbConnection() throws NamingException, DataAccessException{
+        if(dbJndiName == null){
         as.getDao().initDao(driverClass, url, userName, password);
+        }
+        else{
+            Context ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup(dbJndiName);
+            as.getDao().initDao(ds);
+        }
     }
         
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -180,9 +204,10 @@ public class AuthorController extends HttpServlet {
     }// </editor-fold>
     @Override
     public void init(){
-        driverClass = getServletContext().getInitParameter("db.driver.class");
-        url = getServletContext().getInitParameter("db.url");
-        userName = getServletContext().getInitParameter("db.username");
-        password = getServletContext().getInitParameter("db.password");    
+       // driverClass = getServletContext().getInitParameter("db.driver.class");
+        //url = getServletContext().getInitParameter("db.url");
+        //userName = getServletContext().getInitParameter("db.username");
+        //password = getServletContext().getInitParameter("db.password");
+        dbJndiName = getServletContext().getInitParameter("db.jndi.name");
     }
 }

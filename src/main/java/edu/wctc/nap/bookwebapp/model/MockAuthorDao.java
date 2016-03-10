@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Alternative;
+import javax.sql.DataSource;
 
 /**
  *
@@ -56,6 +57,11 @@ public void initDao(String driver, String url, String user, String pwd){
     @Override
     public boolean addAuthor(Integer id, String name) throws SQLException {
         return true;
+    }
+
+    @Override
+    public void initDao(DataSource ds) throws DataAccessException {
+
     }
     
 }

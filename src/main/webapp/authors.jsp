@@ -18,7 +18,7 @@
     </head>
     <body>
     <center><input type="submit" name="" value="Add Author" class="btn-danger" id="authorId" onclick="location.href='AuthorController?taskType=add'"/></center>
-    <table>
+    <table style="background-color: ${table}">
         <thead>
         <tr>
             <th>
@@ -49,8 +49,12 @@
             </c:forEach>
         </tbody>
     </table>
-        <a href="index.html"><button type="button" id="goBack" class="btn btn-primary">Go Back</button></a>
-
+    <style>
+        td,th{
+            color: ${text};
+        }
+    </style>
+        <a href="index.jsp"><button type="button" id="goBack" class="btn btn-primary">Go Back</button></a>
         <script src="//code.jquery.com/jquery-1.12.0.min.js"/>
     </body>
 </html>

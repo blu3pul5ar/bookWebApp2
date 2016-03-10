@@ -14,6 +14,7 @@ import exceptions.DataAccessException;
     import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import javax.sql.DataSource;
 
 /**
  * The general contract for all JDBC database access strategy implementations.
@@ -27,7 +28,8 @@ public interface DBStrategy {
     public abstract void openConnection(String driverClass, String url, 
             String userName, String password) 
             throws ClassNotFoundException, SQLException;
-    
+       
+    public void openConnection(DataSource ds) throws DataAccessException;
     public abstract void closeConnection() throws SQLException;
     public abstract List<Map<String,Object>> findAllRecords(String tableName, int maxRecords) throws SQLException;
     public int deleteRecordbyPrimaryKey(String tableName, String primarykeyName, Object primaryKeyValue) throws SQLException;

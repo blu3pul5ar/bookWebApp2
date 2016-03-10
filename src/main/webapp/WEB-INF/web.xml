@@ -31,6 +31,10 @@ want. If not, see below.
 <param-name>db.password</param-name>
 <param-value>admin</param-value>
 </context-param>
+<context-param>
+        <param-name>db.jndi.name</param-name>
+        <param-value>jdbc/book</param-value>
+    </context-param>
     <session-config>
         <session-timeout>
             30

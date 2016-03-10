@@ -9,10 +9,8 @@ and open the template in the editor.
 */
 table, th, td{
     border: 1px solid black;
-    color: white;
     text-shadow: 1px black;
     text-align: center;
-    background-color: brown;
 }
 table{
     width: 100%;
