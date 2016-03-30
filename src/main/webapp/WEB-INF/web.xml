@@ -16,25 +16,6 @@ d from any JSP page or servlet, which may not be what y
 ou 
 want. If not, see below. 
 -->
-<context-param>
-<param-name>db.driver.class</param-name>
-<param-value>com.mysql.jdbc.Driver</param-value></context-param>
-<context-param>
-<param-name>db.url</param-name>
-<param-value>jdbc:mysql://localhost:3306/book</param-value>
-</context-param>
-<context-param>
-<param-name>db.username</param-name>
-<param-value>root</param-value>
-</context-param>
-<context-param>
-<param-name>db.password</param-name>
-<param-value>admin</param-value>
-</context-param>
-<context-param>
-        <param-name>db.jndi.name</param-name>
-        <param-value>jdbc/book</param-value>
-    </context-param>
     <session-config>
         <session-timeout>
             30
