@@ -29,7 +29,7 @@ public class AuthorFacade extends AbstractFacade<Author> {
     public AuthorFacade() {
         super(Author.class);
     }
-    public void delteAuthorById(String id){
+    public void deleteAuthorById(String id){
         Author author = this.find(new Integer(id));
         this.remove(author);
     }

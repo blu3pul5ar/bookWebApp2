@@ -78,7 +78,7 @@ public class AuthorController extends HttpServlet {
                 case "deleteAuthor":
                     {
                         String authorId = (String)request.getParameter("id");
-                        as.delteAuthorById(authorId);
+                        as.deleteAuthorById(authorId);
                         this.refreshList(request, as);
                         dest = AUTHORS;
                         break;
@@ -112,7 +112,8 @@ public class AuthorController extends HttpServlet {
                             author.setAuthorName(authorName);
                             author.setDateAdded(new Date());
                             as.create(author);
-                        }       this.refreshList(request, as);
+                        }       
+                        this.refreshList(request, as);
                         dest = AUTHORS;
                         break;
                     }
