@@ -6,6 +6,7 @@
 package edu.wctc.nap.bookwebapp.controller;
 
 import edu.wctc.nap.bookwebapp.model.Author;
+import edu.wctc.nap.bookwebapp.model.Book;
 import exceptions.DataAccessException;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -25,17 +26,19 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import wdu.wctc.nap.bookwebapp.ejb.AbstractFacade;
 import wdu.wctc.nap.bookwebapp.ejb.AuthorFacade;
+import wdu.wctc.nap.bookwebapp.ejb.BookFacade;
 
 /**
  *
  * @author npiette
  */
-@WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
-public class AuthorController extends HttpServlet {
-    private static final String AUTHORS = "authors.jsp";
-    private static final String AUTHOR_EDIT_VIEW = "edit.jsp";
-    private static final String AUTHOR_ADD_VIEW = "add.jsp";
+@WebServlet(name = "bookController", urlPatterns = {"/bookController"})
+public class bookController extends HttpServlet {
+    private static final String BOOKS = "listBooks.jsp";
+    private static final String BOOK_EDIT_VIEW = "edit_book.jsp";
+    private static final String BOOK_ADD_VIEW = "add_book.jsp";
     private static final String HOME = "index.jsp";
     private String dbJndiName;
     private String driverClass;
@@ -43,7 +46,9 @@ public class AuthorController extends HttpServlet {
     private String userName;
     private String password;
     @Inject
-    private AuthorFacade as;
+    private AbstractFacade<Book> bf;
+    @Inject
+    private AbstractFacade<Author> as;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -72,59 +77,70 @@ public class AuthorController extends HttpServlet {
         try{
             switch (taskType) {
                 case "view":
-                    request.setAttribute("authors", as.findAll());
-                    dest = AUTHORS;
+                    request.setAttribute("books", bf.findAll());
+                    dest = BOOKS;
                     break;
-                case "deleteAuthor":
+                case "deleteBook":
                     {
                         String authorId = (String)request.getParameter("id");
-                        Author author = as.find(Integer.parseInt(authorId));
-                        as.remove(author);
-                        this.refreshList(request, as);
-                        dest = AUTHORS;
+                        Book book = bf.find(new Integer(authorId));
+                        bf.remove(book);
+                        this.refreshBookList(request, bf);
+                        dest = BOOKS;
                         break;
                     }
                 case "edit":
                     {
-                        String authorId = (String)request.getParameter("id");
-                        Author author = as.find(Integer.parseInt(authorId));
-                        request.setAttribute("author", author);
-                        dest= AUTHOR_EDIT_VIEW;
+                        request.setAttribute("dropDownAuthors", as.findAll());
+                        String bookId = (String)request.getParameter("id");
+                        Book book = bf.find(Integer.parseInt(bookId));
+                        request.setAttribute("book", book);
+                        this.refreshAuthporList(request, as);
+                        this.refreshBookList(request, bf);
+                        dest=BOOK_EDIT_VIEW;
                         break;
                     }
                 case "add":
-                    dest = AUTHOR_ADD_VIEW;
+                    request.setAttribute("dropDownAuthors", as.findAll());
+                    this.refreshAuthporList(request, as);
+                    this.refreshBookList(request, bf);
+                    dest = BOOK_ADD_VIEW;
                     break;
                 case "save":
                     {
-                        String authorName = request.getParameter("authorName");
+                        String title = request.getParameter("title");
+                        String Id = request.getParameter("Id");
+                        String isbn = request.getParameter("isbn");
                         String authorId = request.getParameter("authorId");
-                        String date = request.getParameter("dateadded");
-                        Author author = as.find(Integer.parseInt(authorId));
-                        author.setAuthorName(authorName);
-                        author.setDateAdded(new Date(date));
-                        author.setAuthorId(Integer.parseInt(authorId));
-                        as.edit(author);
-                        this.refreshList(request, as);
-                        dest = AUTHORS;
+                        Author author = as.find(new Integer(authorId));
+                        Book book = new Book();
+                        book.setAuthorId(author);
+                        book.setBookId(Integer.parseInt(Id));
+                        book.setIsbn(isbn);
+                        book.setTitle(title);
+                        bf.edit(book);
+                        this.refreshBookList(request, bf);
+                        dest = BOOKS;
                         break;
                     }
                 case "new":
                     {
-                        String authorName = request.getParameter("authorName");
-                        if(authorName != null){
-                            Author author = new Author();
-                            author.setAuthorName(authorName);
-                            author.setDateAdded(new Date());
-                            as.create(author);
-                        }       
-                        this.refreshList(request, as);
-                        dest = AUTHORS;
+                        String title = request.getParameter("title");
+                        String isbn = request.getParameter("isbn");
+                        String authorId = request.getParameter("authorId");
+                        Book book = new Book();
+                        Author author = as.find(new Integer(authorId));
+                        book.setAuthorId(author);
+                        book.setTitle(title);
+                        book.setIsbn(isbn);
+                        bf.create(book);
+                        this.refreshBookList(request, bf);
+                        dest = BOOKS;
                         break;
                     }
                 case "cancel":
-                    this.refreshList(request, as);
-                    dest = AUTHORS;
+                    this.refreshBookList(request, bf);
+                    dest = BOOKS;
                     break;
                 case "color":
                     String table = request.getParameter("showPaletteOnly");
@@ -132,7 +148,7 @@ public class AuthorController extends HttpServlet {
                     HttpSession session = request.getSession();
                     session.setAttribute("table",table);
                     session.setAttribute("text",text);
-                    this.refreshList(request, as);
+                    this.refreshBookList(request, bf);
                     dest = HOME;
                     break;
                 default:
@@ -145,9 +161,13 @@ public class AuthorController extends HttpServlet {
                 RequestDispatcher view = request.getRequestDispatcher(response.encodeURL(dest));
                 view.forward(request, response);
     }
-    private void refreshList(HttpServletRequest request, AuthorFacade authService) throws Exception {
-        List<Author> authors = as.findAll();
-        request.setAttribute("authors", authors);
+    private void refreshBookList(HttpServletRequest request, AbstractFacade<Book> bf) throws Exception {
+        List<Book> book = bf.findAll();
+        request.setAttribute("books", book);
+    }  
+    private void refreshAuthporList(HttpServletRequest request, AbstractFacade<Author> as) throws Exception {
+        List<Author> author = as.findAll();
+        request.setAttribute("authors", author);
     }    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**S

@@ -6,7 +6,7 @@
 package wdu.wctc.nap.bookwebapp.ejb;
 
 import edu.wctc.nap.bookwebapp.model.Author;
-import java.util.Date;
+import edu.wctc.nap.bookwebapp.model.Book;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
  * @author Nicholas
  */
 @Stateless
-public class AuthorFacade extends AbstractFacade<Author> {
+public class BookFacade extends AbstractFacade<Book> {
 
     @PersistenceContext(unitName = "edu.wctc.nap_bookWebApp_war_1.0-SNAPSHOTPU")
     private EntityManager em;
@@ -26,7 +26,8 @@ public class AuthorFacade extends AbstractFacade<Author> {
         return em;
     }
 
-    public AuthorFacade() {
-        super(Author.class);
+    public BookFacade() {
+        super(Book.class);
     }
+    
 }

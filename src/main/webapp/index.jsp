@@ -25,8 +25,14 @@ and open the template in the editor.
                     <label for="showPaletteOnly1">Text Color:</label>
                     <input type="text" id="showPaletteOnly1" name="showPaletteOnly1" value="${text}"/>
                 </div>
-                <button type="submit" class="btn btn-primary">View Authors</button>
+                <button type="submit" class="btn btn-primary">Save Color Choice</button>
         </form>
+                <form method="POST" action="<%= response.encodeURL("AuthorController?taskType=view")%>">
+                    <button type="submit" name="authors" class="btn btn-primary">View Authors</button>
+                </form>
+                    <form method="POST" action="<%= response.encodeURL("bookController?taskType=view")%>">
+                    <button type="submit" name="books" class="btn btn-primary">View Books</button>
+                </form>
         </div>
         <script src="http://code.jquery.com/jquery-latest.min.js"></script>
         <script src="bgrins-spectrum-98454b5/spectrum.js" type="text/javascript"></script>
@@ -38,7 +44,6 @@ and open the template in the editor.
      showInput: true,
      showInitial: true,
     hideAfterPaletteSelect:true,
-    color: 'white',
     change: function(color){
          $("#showPaletteOnly").val(color);
     },
@@ -54,12 +59,11 @@ and open the template in the editor.
      showInput: true,
      showInitial: true,
     hideAfterPaletteSelect:true,
-    color: 'black',
     change: function(color2){
          $("#showPaletteOnly1").val(color2);
     },
     palette: [
-        ['black', 'white',
+        ['white', 'black',
         'rgb(255, 128, 0);', 'hsv 100 70 50'],
         ['red', 'yellow', 'green', 'blue', 'violet']
     ]
