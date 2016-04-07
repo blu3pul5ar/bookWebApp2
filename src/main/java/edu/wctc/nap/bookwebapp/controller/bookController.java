@@ -7,7 +7,8 @@ package edu.wctc.nap.bookwebapp.controller;
 
 import edu.wctc.nap.bookwebapp.model.Author;
 import edu.wctc.nap.bookwebapp.model.Book;
-import exceptions.DataAccessException;
+import edu.wctc.nap.bookwebapp.service.AuthorService;
+import edu.wctc.nap.bookwebapp.service.BookService;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,17 +19,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
-import javax.inject.Inject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
-import wdu.wctc.nap.bookwebapp.ejb.AbstractFacade;
-import wdu.wctc.nap.bookwebapp.ejb.AuthorFacade;
-import wdu.wctc.nap.bookwebapp.ejb.BookFacade;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
@@ -45,10 +40,8 @@ public class bookController extends HttpServlet {
     private String url;
     private String userName;
     private String password;
-    @Inject
-    private AbstractFacade<Book> bf;
-    @Inject
-    private AbstractFacade<Author> as;
+    private BookService bf;
+    private AuthorService as;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -83,7 +76,7 @@ public class bookController extends HttpServlet {
                 case "deleteBook":
                     {
                         String authorId = (String)request.getParameter("id");
-                        Book book = bf.find(new Integer(authorId));
+                        Book book = bf.findById(authorId);
                         bf.remove(book);
                         this.refreshBookList(request, bf);
                         dest = BOOKS;
@@ -93,7 +86,7 @@ public class bookController extends HttpServlet {
                     {
                         request.setAttribute("dropDownAuthors", as.findAll());
                         String bookId = (String)request.getParameter("id");
-                        Book book = bf.find(Integer.parseInt(bookId));
+                        Book book = bf.findById(bookId);
                         request.setAttribute("book", book);
                         this.refreshAuthporList(request, as);
                         this.refreshBookList(request, bf);
@@ -112,7 +105,7 @@ public class bookController extends HttpServlet {
                         String Id = request.getParameter("Id");
                         String isbn = request.getParameter("isbn");
                         String authorId = request.getParameter("authorId");
-                        Author author = as.find(new Integer(authorId));
+                        Author author = as.findById(authorId);
                         Book book = new Book();
                         book.setAuthorId(author);
                         book.setBookId(Integer.parseInt(Id));
@@ -129,11 +122,11 @@ public class bookController extends HttpServlet {
                         String isbn = request.getParameter("isbn");
                         String authorId = request.getParameter("authorId");
                         Book book = new Book();
-                        Author author = as.find(new Integer(authorId));
+                        Author author = as.findById(authorId);
                         book.setAuthorId(author);
                         book.setTitle(title);
                         book.setIsbn(isbn);
-                        bf.create(book);
+                        bf.edit(book);
                         this.refreshBookList(request, bf);
                         dest = BOOKS;
                         break;
@@ -161,11 +154,11 @@ public class bookController extends HttpServlet {
                 RequestDispatcher view = request.getRequestDispatcher(response.encodeURL(dest));
                 view.forward(request, response);
     }
-    private void refreshBookList(HttpServletRequest request, AbstractFacade<Book> bf) throws Exception {
+    private void refreshBookList(HttpServletRequest request, BookService bf) throws Exception {
         List<Book> book = bf.findAll();
         request.setAttribute("books", book);
     }  
-    private void refreshAuthporList(HttpServletRequest request, AbstractFacade<Author> as) throws Exception {
+    private void refreshAuthporList(HttpServletRequest request, AuthorService as) throws Exception {
         List<Author> author = as.findAll();
         request.setAttribute("authors", author);
     }    
@@ -219,12 +212,13 @@ public class bookController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    @Override
-    public void init(){
-       // driverClass = getServletContext().getInitParameter("db.driver.class");
-        //url = getServletContext().getInitParameter("db.url");
-        //userName = getServletContext().getInitParameter("db.username");
-        //password = getServletContext().getInitParameter("db.password");
-        dbJndiName = getServletContext().getInitParameter("db.jndi.name");
+      @Override
+    public void init() throws ServletException {
+        // Ask Spring for object to inject
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx
+                = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        as = (AuthorService) ctx.getBean("authorService");
+        bf = (BookService) ctx.getBean("bookService");
     }
 }

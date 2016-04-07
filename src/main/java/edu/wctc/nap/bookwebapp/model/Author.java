@@ -40,9 +40,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Author.findByDateAdded", query = "SELECT a FROM Author a WHERE a.dateAdded = :dateAdded")})
 public class Author implements Serializable {
 
-    @OneToMany(mappedBy = "authorId")
-    private Collection<Book> bookCollection;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -85,6 +82,14 @@ public class Author implements Serializable {
         return dateAdded;
     }
 
+    public Set<Book> getBookSet() {
+        return bookSet;
+    }
+
+    public void setBookSet(Set<Book> bookSet) {
+        this.bookSet = bookSet;
+    }
+
     public void setDateAdded(Date dateAdded) {
         this.dateAdded = dateAdded;
     }
@@ -111,13 +116,5 @@ public class Author implements Serializable {
         return "edu.wctc.nap.bookwebapp.model.Author[ authorId=" + authorId + " ]";
     }
 
-    @XmlTransient
-    public Collection<Book> getBookCollection() {
-        return bookCollection;
-    }
-
-    public void setBookCollection(Collection<Book> bookCollection) {
-        this.bookCollection = bookCollection;
-    }
     
 }

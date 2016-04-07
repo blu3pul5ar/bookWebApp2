@@ -15,10 +15,11 @@
     <body>
         <form method="post" action=<%= response.encodeURL("bookController?taskType=save")%>>
             <label>Book Id</label>
+            <input type="text" value="${book.bookId}" readonly/>
             <label>Enter the title of the book</label>
-            <input type="text" name="title"/>
+            <input type="text" name="title" value="${book.title}"/>
             <label>Enter the isbn</label>
-            <input type="text" name="isbn"/>
+            <input type="text" name="isbn" value="${book.isbn}"/>
             <label>Select the author</label>
             <select name="authorId">
                 <c:forEach items="${dropDownAuthors}" var="items">

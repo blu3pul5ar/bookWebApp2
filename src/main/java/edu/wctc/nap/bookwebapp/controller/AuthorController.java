@@ -6,6 +6,7 @@
 package edu.wctc.nap.bookwebapp.controller;
 
 import edu.wctc.nap.bookwebapp.model.Author;
+import edu.wctc.nap.bookwebapp.service.AuthorService;
 import exceptions.DataAccessException;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -23,9 +24,12 @@ import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import javax.sql.DataSource;
-import wdu.wctc.nap.bookwebapp.ejb.AuthorFacade;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  *
@@ -42,8 +46,7 @@ public class AuthorController extends HttpServlet {
     private String url;
     private String userName;
     private String password;
-    @Inject
-    private AuthorFacade as;
+    private AuthorService as;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -78,7 +81,7 @@ public class AuthorController extends HttpServlet {
                 case "deleteAuthor":
                     {
                         String authorId = (String)request.getParameter("id");
-                        Author author = as.find(Integer.parseInt(authorId));
+                        Author author = as.findById(authorId);
                         as.remove(author);
                         this.refreshList(request, as);
                         dest = AUTHORS;
@@ -87,7 +90,7 @@ public class AuthorController extends HttpServlet {
                 case "edit":
                     {
                         String authorId = (String)request.getParameter("id");
-                        Author author = as.find(Integer.parseInt(authorId));
+                        Author author = as.findById(authorId);
                         request.setAttribute("author", author);
                         dest= AUTHOR_EDIT_VIEW;
                         break;
@@ -100,7 +103,7 @@ public class AuthorController extends HttpServlet {
                         String authorName = request.getParameter("authorName");
                         String authorId = request.getParameter("authorId");
                         String date = request.getParameter("dateadded");
-                        Author author = as.find(Integer.parseInt(authorId));
+                        Author author = as.findById(authorId);
                         author.setAuthorName(authorName);
                         author.setDateAdded(new Date(date));
                         author.setAuthorId(Integer.parseInt(authorId));
@@ -116,7 +119,7 @@ public class AuthorController extends HttpServlet {
                             Author author = new Author();
                             author.setAuthorName(authorName);
                             author.setDateAdded(new Date());
-                            as.create(author);
+                            as.edit(author);
                         }       
                         this.refreshList(request, as);
                         dest = AUTHORS;
@@ -145,7 +148,7 @@ public class AuthorController extends HttpServlet {
                 RequestDispatcher view = request.getRequestDispatcher(response.encodeURL(dest));
                 view.forward(request, response);
     }
-    private void refreshList(HttpServletRequest request, AuthorFacade authService) throws Exception {
+    private void refreshList(HttpServletRequest request, AuthorService authService) throws Exception {
         List<Author> authors = as.findAll();
         request.setAttribute("authors", authors);
     }    
@@ -199,12 +202,14 @@ public class AuthorController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+   
     @Override
-    public void init(){
-       // driverClass = getServletContext().getInitParameter("db.driver.class");
-        //url = getServletContext().getInitParameter("db.url");
-        //userName = getServletContext().getInitParameter("db.username");
-        //password = getServletContext().getInitParameter("db.password");
-        dbJndiName = getServletContext().getInitParameter("db.jndi.name");
+    public void init() throws ServletException {
+        // Ask Spring for object to inject
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx
+                = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        as = (AuthorService) ctx.getBean("authorService");
+
     }
 }
