@@ -30,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
  */
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
-    private static final String AUTHORS = "authors.jsp";
+    private static final String AUTHORS = "/authors.jsp";
     private static final String AUTHOR_EDIT_VIEW = "edit.jsp";
     private static final String AUTHOR_ADD_VIEW = "add.jsp";
     private static final String HOME = "index.jsp";
@@ -99,7 +99,6 @@ public class AuthorController extends HttpServlet {
                         Author author = as.findById(authorId);
                         author.setAuthorName(authorName);
                         author.setDateAdded(new Date(date));
-                        author.setAuthorId(Integer.parseInt(authorId));
                         as.edit(author);
                         this.refreshList(request, as);
                         dest = AUTHORS;
