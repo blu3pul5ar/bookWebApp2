@@ -106,9 +106,8 @@ public class bookController extends HttpServlet {
                         String isbn = request.getParameter("isbn");
                         String authorId = request.getParameter("authorId");
                         Author author = as.findById(authorId);
-                        Book book = new Book();
+                        Book book = bf.findById(Id);
                         book.setAuthorId(author);
-                        book.setBookId(Integer.parseInt(Id));
                         book.setIsbn(isbn);
                         book.setTitle(title);
                         bf.edit(book);
@@ -177,9 +176,9 @@ public class bookController extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(bookController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(bookController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

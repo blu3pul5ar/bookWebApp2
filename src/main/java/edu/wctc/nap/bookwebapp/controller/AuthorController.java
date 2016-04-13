@@ -98,7 +98,6 @@ public class AuthorController extends HttpServlet {
                         String date = request.getParameter("dateadded");
                         Author author = as.findById(authorId);
                         author.setAuthorName(authorName);
-                        author.setDateAdded(new Date(date));
                         as.edit(author);
                         this.refreshList(request, as);
                         dest = AUTHORS;
