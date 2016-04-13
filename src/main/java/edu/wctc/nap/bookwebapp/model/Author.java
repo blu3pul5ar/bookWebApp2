@@ -113,8 +113,10 @@ public class Author implements Serializable {
 
     @Override
     public String toString() {
-        return "edu.wctc.nap.bookwebapp.model.Author[ authorId=" + authorId + " ]";
+        return "Author{" + "authorId=" + authorId + ", authorName=" + authorName + ", dateAdded=" + dateAdded + ", bookSet=" + bookSet + '}';
     }
+
+   
 
     
 }

@@ -79,6 +79,7 @@ public class AuthorService {
      * Spring performs a transaction with readonly=false. This
      * guarantees a rollback if something goes wrong.
      * @param author 
+     * @return  
      */
     @Transactional
     public Author edit(Author author) {

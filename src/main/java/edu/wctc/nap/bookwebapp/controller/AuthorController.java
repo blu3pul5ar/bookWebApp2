@@ -7,7 +7,6 @@ package edu.wctc.nap.bookwebapp.controller;
 
 import edu.wctc.nap.bookwebapp.model.Author;
 import edu.wctc.nap.bookwebapp.service.AuthorService;
-import exceptions.DataAccessException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,15 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-import javax.inject.Inject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import javax.sql.DataSource;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
